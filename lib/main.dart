@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app_2a_figueroa/pages/home_page.dart';
 
-void main() {
+//late SqliteHandler mSqliteHandler;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
