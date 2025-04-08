@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "673351857979",
+    "project_id": "duitoapp",
+    "storage_bucket": "duitoapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673351857979:android:3ab4039eecb94081dfe91e",
+        "android_client_info": {
+          "package_name": "com.dtf.duitoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "673351857979-dh4kh052mrdudsfeu9fon32b6rl5lrnj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dtf.duitoapp",
+            "certificate_hash": "fce653d3412150874b5d0d3fe8077648830a86de"
+          }
+        },
+        {
+          "client_id": "673351857979-ta6js1j9v45b9lv8sqb5odc9f93taeit.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUMGH7oZekEBAA-fKBEAN0PU0tnW8LlII"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "673351857979-ta6js1j9v45b9lv8sqb5odc9f93taeit.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

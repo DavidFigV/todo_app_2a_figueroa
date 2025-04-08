@@ -1,6 +1,6 @@
-import 'package:todo_app_2a_figueroa/core/models/task.dart';
-import 'package:todo_app_2a_figueroa/core/repositories/task_repository.dart';
-import 'package:todo_app_2a_figueroa/handlers/sqlite_handeler.dart';
+import 'package:duito/core/models/task.dart';
+import 'package:duito/core/repositories/task_repository.dart';
+import 'package:duito/handlers/sqlite_handeler.dart';
 
 class TaskRepositorySQLite implements TaskRepository {
   final SqliteHandler _sqliteHandler = SqliteHandler();
@@ -21,8 +21,8 @@ class TaskRepositorySQLite implements TaskRepository {
   @override
   Future<void> updateTask(Task task) async {
     final db = await _sqliteHandler.getDb();
-    await db.update('tasks', task.toMap(),
-        where: 'idx = ?', whereArgs: [task.idx]);
+    await db
+        .update('tasks', task.toMap(), where: 'idx = ?', whereArgs: [task.idx]);
   }
 
   @override

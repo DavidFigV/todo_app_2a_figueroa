@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app_2a_figueroa/core/models/task.dart';
-import 'package:todo_app_2a_figueroa/core/repositories/task_repository.dart';
-import 'package:todo_app_2a_figueroa/data/sqlite/task_repository_sqlite.dart';
-import 'package:todo_app_2a_figueroa/util/dialog_box.dart';
-import 'package:todo_app_2a_figueroa/util/todo_tile.dart';
+import 'package:duito/core/models/task.dart';
+import 'package:duito/core/repositories/task_repository.dart';
+import 'package:duito/data/sqlite/task_repository_sqlite.dart';
+import 'package:duito/util/dialog_box.dart';
+import 'package:duito/util/todo_tile.dart';
+import 'package:duito/data/firebase/auth_repository_firebase.dart';
+import 'package:duito/pages/login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -69,11 +71,34 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _logout() async {
+    final authRepo = AuthRepositoryFirebase();
+    await authRepo.signOut();
+
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => LoginPage()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[200],
-      appBar: AppBar(title: const Text("TO DO"), centerTitle: true),
+      appBar: AppBar(
+        title: const Text("TO DO"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Cerrar sesión',
+            onPressed: _logout,
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: createNewTask,
         child: const Icon(Icons.add),

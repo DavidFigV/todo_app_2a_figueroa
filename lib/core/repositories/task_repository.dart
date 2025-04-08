@@ -1,4 +1,4 @@
-import 'package:todo_app_2a_figueroa/core/models/task.dart';
+import 'package:duito/core/models/task.dart';
 
 abstract class TaskRepository {
   Future<List<Task>> getTasks();

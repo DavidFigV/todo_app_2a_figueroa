@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app_2a_figueroa/util/my_button.dart';
+import 'package:duito/util/my_button.dart';
 
 class DialogBox extends StatelessWidget {
   final TextEditingController controller;
