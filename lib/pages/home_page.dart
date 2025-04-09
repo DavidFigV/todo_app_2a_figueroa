@@ -1,11 +1,12 @@
+import 'package:duito/data/firebase/task_repository_firebase.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:duito/core/models/task.dart';
 import 'package:duito/core/repositories/task_repository.dart';
-import 'package:duito/data/sqlite/task_repository_sqlite.dart';
+import 'package:duito/core/repositories/task_repository_sync.dart';
+import 'package:duito/data/firebase/auth_repository_firebase.dart';
 import 'package:duito/util/dialog_box.dart';
 import 'package:duito/util/todo_tile.dart';
-import 'package:duito/data/firebase/auth_repository_firebase.dart';
-import 'package:duito/pages/login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,13 +17,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _controller = TextEditingController();
-  final TaskRepository _taskRepository = TaskRepositorySQLite();
+  final TaskRepository _taskRepository = TaskRepositorySync();
   List<Task> tasks = [];
+
+  bool logueado = false;
+  bool modoLocal = false;
 
   @override
   void initState() {
     super.initState();
+    _cargarEstado();
     loadTasks();
+  }
+
+  void _cargarEstado() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      logueado = prefs.getBool('logueado') ?? false;
+      modoLocal = prefs.getBool('modo_local') ?? false;
+    });
   }
 
   void loadTasks() async {
@@ -75,13 +88,51 @@ class _HomePageState extends State<HomePage> {
     final authRepo = AuthRepositoryFirebase();
     await authRepo.signOut();
 
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('logueado', false);
+    await prefs.setBool('modo_local', true);
+
+    setState(() {
+      logueado = false;
+      modoLocal = true;
+    });
+  }
+
+  void _loginAndSync() async {
+    final authRepo = AuthRepositoryFirebase();
+    final ok = await authRepo.signInWithGoogle();
+
     if (!mounted) return;
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => LoginPage()),
-      (route) => false,
-    );
+    if (ok) {
+      // Obtener tareas locales
+      final localTasks = await _taskRepository.getTasks();
+
+      // Subirlas a Firebase
+      final firebaseRepo = TaskRepositoryFirebase();
+      await firebaseRepo.syncFromLocal(localTasks);
+
+      // Guardar estado
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('logueado', true);
+      await prefs.setBool('modo_local', false);
+
+      if (!mounted) return;
+      setState(() {
+        logueado = true;
+        modoLocal = false;
+      });
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Tareas sincronizadas con Firebase")),
+      );
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No se pudo iniciar sesión")),
+      );
+    }
   }
 
   @override
@@ -93,9 +144,10 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Cerrar sesión',
-            onPressed: _logout,
+            icon: Icon(logueado ? Icons.logout : Icons.login),
+            tooltip:
+                logueado ? 'Cerrar sesión' : 'Iniciar sesión y sincronizar',
+            onPressed: logueado ? _logout : _loginAndSync,
           ),
         ],
       ),

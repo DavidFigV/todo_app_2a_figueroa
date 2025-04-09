@@ -20,9 +20,8 @@ class SqliteHandler {
       CREATE TABLE tasks (
         idx TEXT PRIMARY KEY,
         task_description TEXT,
-        completed INTEGER DEFAULT 0,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        completed INTEGER DEFAULT 0, 
+        updated_at TEXT
       );
     ''');
   }

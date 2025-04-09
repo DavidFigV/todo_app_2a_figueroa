@@ -1,6 +1,7 @@
 import 'package:duito/core/models/task.dart';
 import 'package:duito/core/repositories/task_repository.dart';
 import 'package:duito/handlers/sqlite_handeler.dart';
+import 'package:sqflite/sqflite.dart';
 
 class TaskRepositorySQLite implements TaskRepository {
   final SqliteHandler _sqliteHandler = SqliteHandler();
@@ -15,7 +16,11 @@ class TaskRepositorySQLite implements TaskRepository {
   @override
   Future<void> addTask(Task task) async {
     final db = await _sqliteHandler.getDb();
-    await db.insert('tasks', task.toMap());
+    await db.insert(
+      'tasks',
+      task.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   @override
